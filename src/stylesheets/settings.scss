@@ -1,0 +1,21 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+.settings label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.settings select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}

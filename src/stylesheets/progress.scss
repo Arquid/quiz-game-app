@@ -1,0 +1,29 @@
+.progress-container {
+  margin-bottom: 1rem;
+
+  .progress {
+    background: #ddd;
+    border-radius: 8px;
+    height: 20px;
+    margin: 5px 0;
+    overflow: hidden;
+
+    .progress-bar {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      transition: width 0.3s ease;
+    }
+  }
+
+  .question-progress .progress-bar {
+    background-color: #4caf50;
+  }
+    
+  .time-progress .progress-bar {
+    background: #f44336;
+  }
+}
