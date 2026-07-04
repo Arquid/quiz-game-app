@@ -6,6 +6,7 @@ import Result from "./Result";
 import Settings from "./Settings";
 import Progress from "./Progress";
 import "../stylesheets/quiz.scss";
+import { playCorrectSound, playWrongSound } from "../utils/sound";
 
 const shuffle = (array) => {
   const arr = [...array];
@@ -41,6 +42,8 @@ function Quiz() {
     } else if (isCorrect) {
       setScore((prev) => prev + 1);
     }
+
+    isCorrect ? playCorrectSound() : playWrongSound();
 
     setShowAnswer(true); 
     setIsPaused(true);
