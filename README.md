@@ -31,8 +31,8 @@ A modern quiz application built with React. Users can customize quiz settings, a
 Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/quiz-app.git
-cd quiz-app
+git clone https://github.com/Arquid/quiz-game-app.git
+cd quiz-game-app
 ```
 
 Install dependencies:
