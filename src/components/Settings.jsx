@@ -4,20 +4,35 @@ import "../stylesheets/settings.scss";
 
 function Settings({ onStart }) {
   const [categories, setCategories] = useState([]);
+  const [categoryError, setCategoryError] = useState(null);
   const [amount, setAmount] = useState(10);
   const [category, setCategory] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [type, setType] = useState("");
+  const [timePerQuestion, setTimePerQuestion] = useState(15);
 
   useEffect(() => {
     axios.get("https://opentdb.com/api_category.php")
       .then(response => setCategories(response.data.trivia_categories))
-      .catch(error => console.error("Error fetching categories:", error));
+      .catch(error => {
+        console.error("Error fetching categories:", error);
+        setCategoryError("Category loading failed. You can start with all categories.");
+      });
   }, []);
 
   const startQuiz = () => {
-    onStart({ amount, category, difficulty, type });
+    onStart({ amount, category, difficulty, type, timePerQuestion });
   };
+
+  const clampAmount = (value) => {
+    if (Number.isNaN(value)) return 1;
+    return Math.min(50, Math.max(1, value));
+  }
+
+  const clampTime = (value) => {
+    if (Number.isNaN(value)) return 5;
+    return Math.min(60, Math.max(5, value));
+  }
 
   return (
     <div className="settings">
@@ -29,7 +44,17 @@ function Settings({ onStart }) {
           min="1"
           max="50"
           value={amount}
-          onChange={(e) => setAmount(parseInt(e.target.value) || 10)}
+          onChange={(e) => setAmount(clampAmount(parseInt(e.target.value, 10)))}
+        />
+      </label>
+      <label>
+        Time per Question (seconds):
+        <input
+          type="number"
+          min="5"
+          max="60"
+          value={timePerQuestion}
+          onChange={(e) => setTimePerQuestion(clampTime(parseInt(e.target.value, 10)))}
         />
       </label>
       <label>
@@ -60,6 +85,7 @@ function Settings({ onStart }) {
           <option value="boolean">True/False</option>
         </select>
       </label>
+      {categoryError && <p className="category-error">{categoryError}</p>}
       <button onClick={startQuiz}>Start Quiz</button>
     </div>
   );

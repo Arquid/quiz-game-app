@@ -7,11 +7,12 @@ A modern quiz application built with React. Users can customize quiz settings, a
 ## 🚀 Features
 
 * 🎯 Custom quiz settings (amount, category, difficulty, type)
-* ⏱ Timer for each question
+* ⏱ Custom timer per question
 * 📊 Progress bar (questions + time)
 * ✅ Instant answer feedback (correct / wrong)
+* 🛑 Cancel quiz anytime and return to settings
 * 🔁 Restart quiz anytime
-* ⚠️ Error handling for API issues
+* ⚠️ Error handling for API issues (questions & categories)
 * 🎲 Randomized answer order
 
 ---
@@ -82,11 +83,11 @@ src/
 
 ## 🧠 How It Works
 
-1. User selects quiz settings
+1. User selects quiz settings (including time per question)
 2. Questions are fetched from the API
 3. Answers are shuffled randomly
 4. Timer starts for each question
-5. User selects an answer
+5. User selects an answer (or the quiz can be cancelled at any time)
 6. Correct answer is shown
 7. Score is calculated at the end
 
@@ -94,7 +95,6 @@ src/
 
 ## ⚠️ Known Limitations
 
-* Timer is currently fixed (default 15s)
 * No persistent storage (settings reset on refresh)
 * No animations yet
 
@@ -107,7 +107,6 @@ src/
 * 📊 Detailed statistics (accuracy, streaks)
 * 🔊 Sound effects
 * 🎨 Animations & UI polish
-* ⏱ Custom time per question
 
 ---
 

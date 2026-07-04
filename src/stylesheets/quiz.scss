@@ -31,6 +31,25 @@ button:hover {
   transform: scale(1.05);
 }
 
+.quiz-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cancel-button {
+  margin-top: 0;
+  margin-left: 0;
+  background-color: transparent;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+
+  &:hover {
+    background-color: #e53e3e;
+    color: #fff;
+    transform: none;
+  }
+}
+
 .error {
   text-align: center;
   color: #e53e3e;
@@ -40,6 +59,7 @@ button:hover {
     font-size: 1.2rem;
   }
 }
+
 .loading {
   text-align: center;
   font-size: 1.2rem;

@@ -137,6 +137,12 @@ function Quiz() {
     setIsPaused(false);
   };
 
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to cancel the quiz?")) {
+      handleRestart();
+    }
+  };
+
   const isLoading = settings && questions.length === 0 && !error;
 
   if (!settings) return <Settings onStart={handleStart} />;
@@ -154,6 +160,11 @@ function Quiz() {
     <Result score={score} totalQuestions={questions.length} onRestart={handleRestart} />
   ) : (
     <div className="quiz-container">
+      <div className="quiz-header">
+        <button className="cancel-button" onClick={handleCancel}>
+          Cancel Quiz
+        </button>
+      </div>
       <Progress
         current={currentQuestionIndex + 1}
         total={questions.length}

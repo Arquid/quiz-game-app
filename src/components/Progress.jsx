@@ -2,8 +2,8 @@ import React from "react";
 import "../stylesheets/progress.scss";
 
 function Progress({ current, total, timeLeft, timePerQuestion }) {
-  const questionPercentage = (current / total) * 100;
-  const timePercentage = (timeLeft / timePerQuestion) * 100;
+  const questionPercentage = total > 0 ? (current / total) * 100 : 0;
+  const timePercentage = timePerQuestion > 0 ? (timeLeft / timePerQuestion) * 100 : 0;
 
   return (
     <div className="progress-container">
