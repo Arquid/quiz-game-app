@@ -155,7 +155,12 @@ function Quiz() {
 
   if (!settings) return <Settings onStart={handleStart} />;
 
-  if (isLoading) return <div className="loading">Loading questions...</div>;
+  if (isLoading) return (
+    <div className="loading">
+      <div className="spinner"></div>
+      Loading questions...
+    </div>
+  );
 
   if (error) return (
     <div className="error">
@@ -180,9 +185,13 @@ function Quiz() {
         timePerQuestion={timePerQuestion}
       />
       { !questions[currentQuestionIndex] ? (
-        <div className="loading">Loading questions...</div>
+        <div className="loading">
+          <div className="spinner"></div>
+          Loading questions...
+        </div>
       ) : (
         <Question
+          key={currentQuestionIndex}
           data={questions[currentQuestionIndex]}
           onAnswer={handleAnswer}
           showAnswer={showAnswer}

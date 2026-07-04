@@ -10,8 +10,11 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * ⏱ Custom timer per question
 * 💾 Settings saved automatically (localStorage)
 * 🌙 Dark mode toggle
+* 🔊 Sound effects with mute toggle
+* 🎨 Animations (transitions, answer feedback, loading spinner)
 * 📊 Progress bar (questions + time)
 * ✅ Instant answer feedback (correct / wrong)
+* 📈 Detailed results (accuracy % and best streak)
 * 🛑 Cancel quiz anytime and return to settings
 * 🔁 Restart quiz anytime
 * ⚠️ Error handling for API issues (questions & categories)
@@ -76,7 +79,11 @@ src/
 │   ├── question.scss
 │   ├── progress.scss
 │   ├── result.scss
-│   └── settings.scss
+│   ├── settings.scss
+│   └── app.scss
+│
+├── utils/
+│   └── sound.js
 │
 └── App.jsx
 ```
@@ -85,27 +92,13 @@ src/
 
 ## 🧠 How It Works
 
-1. User selects quiz settings (including time per question)
+1. User selects quiz settings (including time per question) — settings are remembered for next time
 2. Questions are fetched from the API
 3. Answers are shuffled randomly
 4. Timer starts for each question
 5. User selects an answer (or the quiz can be cancelled at any time)
-6. Correct answer is shown
-7. Score is calculated at the end
-
----
-
-## ⚠️ Known Limitations
-
-* No animations yet
-
----
-
-## 💡 Future Improvements
-
-* 📊 Detailed statistics (accuracy, streaks)
-* 🔊 Sound effects
-* 🎨 Animations & UI polish
+6. Correct answer is shown, with sound feedback (unless muted)
+7. Score, accuracy, and best streak are calculated at the end
 
 ---
 
