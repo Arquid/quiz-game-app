@@ -1,15 +1,28 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useMemo, useState} from "react";
 import axios from "axios";
 import "../stylesheets/settings.scss";
 
+const STORAGE_KEY = "quizSettings";
+
+function getSavedSettings() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : {};
+  } catch {
+    return {};
+  }
+}
+
 function Settings({ onStart }) {
+  const savedSettings = useMemo(() => getSavedSettings(), []);
+
   const [categories, setCategories] = useState([]);
   const [categoryError, setCategoryError] = useState(null);
-  const [amount, setAmount] = useState(10);
-  const [category, setCategory] = useState("");
-  const [difficulty, setDifficulty] = useState("");
-  const [type, setType] = useState("");
-  const [timePerQuestion, setTimePerQuestion] = useState(15);
+  const [amount, setAmount] = useState(savedSettings.amount ?? 10);
+  const [category, setCategory] = useState(savedSettings.category ?? "");
+  const [difficulty, setDifficulty] = useState(savedSettings.difficulty ?? "");
+  const [type, setType] = useState(savedSettings.type ?? "");
+  const [timePerQuestion, setTimePerQuestion] = useState(savedSettings.timePerQuestion ?? 15);
 
   useEffect(() => {
     axios.get("https://opentdb.com/api_category.php")
@@ -21,7 +34,9 @@ function Settings({ onStart }) {
   }, []);
 
   const startQuiz = () => {
-    onStart({ amount, category, difficulty, type, timePerQuestion });
+    const newSettings = { amount, category, difficulty, type, timePerQuestion };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
+    onStart(newSettings);
   };
 
   const clampAmount = (value) => {

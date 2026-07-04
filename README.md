@@ -8,6 +8,8 @@ A modern quiz application built with React. Users can customize quiz settings, a
 
 * 🎯 Custom quiz settings (amount, category, difficulty, type)
 * ⏱ Custom timer per question
+* 💾 Settings saved automatically (localStorage)
+* 🌙 Dark mode toggle
 * 📊 Progress bar (questions + time)
 * ✅ Instant answer feedback (correct / wrong)
 * 🛑 Cancel quiz anytime and return to settings
@@ -95,15 +97,12 @@ src/
 
 ## ⚠️ Known Limitations
 
-* No persistent storage (settings reset on refresh)
 * No animations yet
 
 ---
 
 ## 💡 Future Improvements
 
-* 🌙 Dark mode
-* 💾 Save settings (localStorage)
 * 📊 Detailed statistics (accuracy, streaks)
 * 🔊 Sound effects
 * 🎨 Animations & UI polish
