@@ -10,4 +10,27 @@
     font-size: 1.2rem;
     color: #4f46e5;
   }
+
+  .stats {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 20px 0;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #4f46e5;
+  }
+
+  .stat-label {
+    font-size: 0.9rem;
+    color: #666;
+  }
 }

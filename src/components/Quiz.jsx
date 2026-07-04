@@ -27,21 +27,24 @@ function Quiz() {
   const [isPaused, setIsPaused] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [answerLog, setAnswerLog] = useState([]);
 
   const timePerQuestion = settings?.timePerQuestion || 15;
 
   const handleAnswer = useCallback((answer) => {
     setSelectedAnswer(answer);
     const correct = questions[currentQuestionIndex].correctAnswer;
+    const isCorrect = answer === correct;
 
     if (answer === null) {
       console.log("Time's up!");
-    } else if (answer === correct) {
+    } else if (isCorrect) {
       setScore((prev) => prev + 1);
     }
 
     setShowAnswer(true); 
     setIsPaused(true);
+    setAnswerLog((prev) => [...prev, isCorrect]);
 
   }, [questions, currentQuestionIndex]);
 
@@ -123,6 +126,7 @@ function Quiz() {
     setTimeLeft(newSettings.timePerQuestion || 15);
     setShowAnswer(false);
     setIsPaused(false);
+    setAnswerLog([]);
   };
 
   const handleRestart = () => {
@@ -135,6 +139,7 @@ function Quiz() {
     setTimeLeft(timePerQuestion);
     setShowAnswer(false);
     setIsPaused(false);
+    setAnswerLog([]);
   };
 
   const handleCancel = () => {
@@ -157,7 +162,7 @@ function Quiz() {
   );
 
   return showResult ? (
-    <Result score={score} totalQuestions={questions.length} onRestart={handleRestart} />
+    <Result score={score} totalQuestions={questions.length} onRestart={handleRestart} answerLog={answerLog} />
   ) : (
     <div className="quiz-container">
       <div className="quiz-header">
