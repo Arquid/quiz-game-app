@@ -67,12 +67,18 @@ This project uses:
 ```
 src/
 │
+├── api/
+│   └── trivia.js
+│
 ├── components/
 │   ├── Quiz.jsx
 │   ├── Question.jsx
 │   ├── Progress.jsx
 │   ├── Result.jsx
 │   └── Settings.jsx
+│
+├── hooks/
+│   └── useQuiz.js
 │
 ├── stylesheets/
 │   ├── quiz.scss
