@@ -28,6 +28,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * **Axios**
 * **SCSS**
 * **Open Trivia DB API**
+* **Vitest + React Testing Library** (unit & component tests)
 
 ---
 
@@ -52,6 +53,12 @@ Run the app:
 npm run dev
 ```
 
+Run the tests:
+
+```bash
+npm test
+```
+
 ---
 
 ## 🌐 API
@@ -68,17 +75,22 @@ This project uses:
 src/
 │
 ├── api/
-│   └── trivia.js
+│   ├── trivia.js
+│   └── trivia.test.js
 │
 ├── components/
 │   ├── Quiz.jsx
 │   ├── Question.jsx
+│   ├── Question.test.jsx
 │   ├── Progress.jsx
+│   ├── Progress.test.jsx
 │   ├── Result.jsx
-│   └── Settings.jsx
+│   ├── Settings.jsx
+│   └── Settings.test.jsx
 │
 ├── hooks/
-│   └── useQuiz.js
+│   ├── useQuiz.js
+│   └── useQuiz.test.js
 │
 ├── stylesheets/
 │   ├── quiz.scss
@@ -88,11 +100,16 @@ src/
 │   ├── settings.scss
 │   └── app.scss
 │
+├── test/
+│   └── setup.js
+│
 ├── utils/
 │   └── sound.js
 │
 └── App.jsx
 ```
+
+Tests live next to the files they cover (e.g. `Progress.jsx` + `Progress.test.jsx`), which is the standard convention for Vitest/React projects — it keeps a test in sync automatically when its file is moved or renamed.
 
 ---
 

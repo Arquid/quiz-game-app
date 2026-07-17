@@ -2,7 +2,7 @@ import { useEffect, useReducer, useCallback } from "react";
 import { fetchQuizQuestions } from "../api/trivia";
 import { playCorrectSound, playWrongSound } from "../utils/sound";
 
-const initialState = {
+export const initialState = {
   settings: null,
   questions: [],
   currentQuestionIndex: 0,
@@ -16,7 +16,7 @@ const initialState = {
   answerLog: [],
 };
 
-function quizReducer(state, action) {
+export function quizReducer(state, action) {
   switch (action.type) {
     case "START_QUIZ":
       return {

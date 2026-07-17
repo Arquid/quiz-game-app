@@ -1,0 +1,100 @@
+import { describe, it, expect } from 'vitest';
+import { quizReducer, initialState } from './useQuiz';
+
+describe('quizReducer', () => {
+  it('START_QUIZ resets state and sets timeLeft from settings', () => {
+    const dirtyState = { ...initialState, score: 5, currentQuestionIndex: 3, answerLog: [true, false] };
+    const settings = { amount: 5, timePerQuestion: 25 };
+
+    const result = quizReducer(dirtyState, { type: 'START_QUIZ', settings });
+
+    expect(result.settings).toEqual(settings);
+    expect(result.timeLeft).toBe(25);
+    expect(result.score).toBe(0);
+    expect(result.currentQuestionIndex).toBe(0);
+    expect(result.answerLog).toEqual([]);
+  });
+
+  it('START_QUIZ falls back to 15s when timePerQuestion is missing', () => {
+    const result = quizReducer(initialState, { type: 'START_QUIZ', settings: { amount: 5 } });
+    expect(result.timeLeft).toBe(15);
+  });
+
+  it('QUESTIONS_LOADED stores questions and resets the timer', () => {
+    const state = { ...initialState, settings: { timePerQuestion: 20 }, timeLeft: 3 };
+    const questions = [{ question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' }];
+
+    const result = quizReducer(state, { type: 'QUESTIONS_LOADED', questions });
+
+    expect(result.questions).toEqual(questions);
+    expect(result.timeLeft).toBe(20);
+  });
+
+  it('ANSWER increments score on a correct answer and logs it', () => {
+    const state = { ...initialState, score: 2, answerLog: [true] };
+
+    const result = quizReducer(state, { type: 'ANSWER', answer: 'a', isCorrect: true });
+
+    expect(result.score).toBe(3);
+    expect(result.answerLog).toEqual([true, true]);
+    expect(result.showAnswer).toBe(true);
+    expect(result.isPaused).toBe(true);
+    expect(result.selectedAnswer).toBe('a');
+  });
+
+  it('ANSWER does not increment score on a wrong answer but still logs it', () => {
+    const result = quizReducer(initialState, { type: 'ANSWER', answer: 'b', isCorrect: false });
+
+    expect(result.score).toBe(0);
+    expect(result.answerLog).toEqual([false]);
+  });
+
+  it('NEXT_QUESTION advances to the next question and resets per-question state', () => {
+    const state = {
+      ...initialState,
+      settings: { timePerQuestion: 15 },
+      questions: [{}, {}, {}],
+      currentQuestionIndex: 0,
+      showAnswer: true,
+      selectedAnswer: 'a',
+    };
+
+    const result = quizReducer(state, { type: 'NEXT_QUESTION' });
+
+    expect(result.currentQuestionIndex).toBe(1);
+    expect(result.showAnswer).toBe(false);
+    expect(result.isPaused).toBe(false);
+    expect(result.selectedAnswer).toBeNull();
+    expect(result.timeLeft).toBe(15);
+    expect(result.showResult).toBe(false);
+  });
+
+  it('NEXT_QUESTION shows the result screen after the last question', () => {
+    const state = {
+      ...initialState,
+      settings: { timePerQuestion: 15 },
+      questions: [{}, {}],
+      currentQuestionIndex: 1,
+    };
+
+    const result = quizReducer(state, { type: 'NEXT_QUESTION' });
+
+    expect(result.showResult).toBe(true);
+  });
+
+  it('TICK decrements timeLeft by one', () => {
+    const result = quizReducer({ ...initialState, timeLeft: 10 }, { type: 'TICK' });
+    expect(result.timeLeft).toBe(9);
+  });
+
+  it('TICK never goes below zero (regression: avoids negative timer display)', () => {
+    const result = quizReducer({ ...initialState, timeLeft: 0 }, { type: 'TICK' });
+    expect(result.timeLeft).toBe(0);
+  });
+
+  it('RESET returns to the initial state regardless of current state', () => {
+    const dirtyState = { ...initialState, score: 10, settings: { amount: 5 }, showResult: true };
+    const result = quizReducer(dirtyState, { type: 'RESET' });
+    expect(result).toEqual(initialState);
+  });
+});
