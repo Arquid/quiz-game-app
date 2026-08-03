@@ -30,23 +30,26 @@ describe('quizReducer', () => {
     expect(result.timeLeft).toBe(20);
   });
 
-  it('ANSWER increments score on a correct answer and logs it', () => {
-    const state = { ...initialState, score: 2, answerLog: [true] };
+  it('ANSWER increments score on a correct answer and logs the full entry', () => {
+    const priorEntry = { question: 'Q0', selectedAnswer: 'x', correctAnswer: 'x', isCorrect: true };
+    const state = { ...initialState, score: 2, answerLog: [priorEntry] };
+    const entry = { question: 'Q1', selectedAnswer: 'a', correctAnswer: 'a', isCorrect: true };
 
-    const result = quizReducer(state, { type: 'ANSWER', answer: 'a', isCorrect: true });
+    const result = quizReducer(state, { type: 'ANSWER', entry });
 
     expect(result.score).toBe(3);
-    expect(result.answerLog).toEqual([true, true]);
+    expect(result.answerLog).toEqual([priorEntry, entry]);
     expect(result.showAnswer).toBe(true);
     expect(result.isPaused).toBe(true);
     expect(result.selectedAnswer).toBe('a');
   });
 
   it('ANSWER does not increment score on a wrong answer but still logs it', () => {
-    const result = quizReducer(initialState, { type: 'ANSWER', answer: 'b', isCorrect: false });
+    const entry = { question: 'Q1', selectedAnswer: 'b', correctAnswer: 'a', isCorrect: false };
+    const result = quizReducer(initialState, { type: 'ANSWER', entry });
 
     expect(result.score).toBe(0);
-    expect(result.answerLog).toEqual([false]);
+    expect(result.answerLog).toEqual([entry]);
   });
 
   it('NEXT_QUESTION advances to the next question and resets per-question state', () => {

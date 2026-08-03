@@ -1,5 +1,7 @@
 # 🧠 Quiz App (React)
 
+![CI](https://github.com/Arquid/quiz-game-app/actions/workflows/ci.yml/badge.svg)
+
 A modern quiz application built with React. Users can customize quiz settings, answer timed questions, and see their results at the end.
 
 ---
@@ -15,6 +17,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * 📊 Progress bar (questions + time)
 * ✅ Instant answer feedback (correct / wrong)
 * 📈 Detailed results (accuracy % and best streak)
+* 🔍 Review of wrong answers at the end (your answer vs. the correct one)
 * 🛑 Cancel quiz anytime and return to settings
 * 🔁 Restart quiz anytime
 * ⚠️ Error handling for API issues (questions & categories)
@@ -29,6 +32,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * **SCSS**
 * **Open Trivia DB API**
 * **Vitest + React Testing Library** (unit & component tests)
+* **GitHub Actions** (CI: lint, test, and build on every push/PR)
 
 ---
 
@@ -80,11 +84,13 @@ src/
 │
 ├── components/
 │   ├── Quiz.jsx
+│   ├── Quiz.test.jsx
 │   ├── Question.jsx
 │   ├── Question.test.jsx
 │   ├── Progress.jsx
 │   ├── Progress.test.jsx
 │   ├── Result.jsx
+│   ├── Result.test.jsx
 │   ├── Settings.jsx
 │   └── Settings.test.jsx
 │
@@ -104,7 +110,8 @@ src/
 │   └── setup.js
 │
 ├── utils/
-│   └── sound.js
+│   ├── sound.js
+│   └── sound.test.js
 │
 └── App.jsx
 ```
@@ -122,6 +129,7 @@ Tests live next to the files they cover (e.g. `Progress.jsx` + `Progress.test.js
 5. User selects an answer (or the quiz can be cancelled at any time)
 6. Correct answer is shown, with sound feedback (unless muted)
 7. Score, accuracy, and best streak are calculated at the end
+8. Any wrong answers are listed for review, alongside the correct answer
 
 ---
 

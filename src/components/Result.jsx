@@ -4,8 +4,8 @@ import "../stylesheets/result.scss";
 function getBestStreak(log) {
   let best = 0;
   let current = 0;
-  for (const isCorrect of log) {
-    current = isCorrect ? current + 1 : 0;
+  for (const entry of log) {
+    current = entry.isCorrect ? current + 1 : 0;
     if (current > best) best = current;
   }
   return best;
@@ -14,6 +14,7 @@ function getBestStreak(log) {
 function Result({ score, totalQuestions, answerLog, onRestart }) {
   const accuracy = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
   const bestStreak = getBestStreak(answerLog);
+  const wrongAnswers = answerLog.filter((entry) => !entry.isCorrect);
 
   return (
     <div className="result">
@@ -29,6 +30,24 @@ function Result({ score, totalQuestions, answerLog, onRestart }) {
           <span className="stat-label">Best Streak</span>
         </div>
       </div>
+
+      {wrongAnswers.length > 0 && (
+        <div className="review">
+          <h3>Review your wrong answers</h3>
+          <ul>
+            {wrongAnswers.map((entry, index) => (
+              <li key={index}>
+                <p className="review-question">{entry.question}</p>
+                <p className="review-answer wrong">
+                  Your answer: {entry.selectedAnswer ?? "No answer (time ran out)"}
+                </p>
+                <p className="review-answer correct">Correct answer: {entry.correctAnswer}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <button onClick={onRestart}>Play Again</button>
     </div>
   );

@@ -33,4 +33,49 @@
     font-size: 0.9rem;
     color: #666;
   }
+
+  .review {
+    text-align: left;
+    margin: 20px 0;
+    max-height: 300px;
+    overflow-y: auto;
+
+    h3 {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      background-color: #f8f9fb;
+      border-radius: 8px;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+    }
+
+    .review-question {
+      font-weight: bold;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .review-answer {
+      font-size: 0.9rem;
+      margin: 2px 0;
+
+      &.wrong {
+        color: #e53e3e;
+      }
+
+      &.correct {
+        color: #4caf50;
+      }
+    }
+  }
 }

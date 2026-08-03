@@ -38,11 +38,11 @@ export function quizReducer(state, action) {
     case "ANSWER":
       return {
         ...state,
-        selectedAnswer: action.answer,
+        selectedAnswer: action.entry.selectedAnswer,
         showAnswer: true,
         isPaused: true,
-        score: action.isCorrect ? state.score + 1 : state.score,
-        answerLog: [...state.answerLog, action.isCorrect],
+        score: action.entry.isCorrect ? state.score + 1 : state.score,
+        answerLog: [...state.answerLog, action.entry],
       };
 
     case "NEXT_QUESTION": {
@@ -76,7 +76,8 @@ export function useQuiz() {
   const { questions, currentQuestionIndex, showResult, settings, isPaused, timeLeft, showAnswer } = state;
 
   const handleAnswer = useCallback((answer) => {
-    const correct = questions[currentQuestionIndex].correctAnswer;
+    const currentQuestion = questions[currentQuestionIndex];
+    const correct = currentQuestion.correctAnswer;
     const isCorrect = answer === correct;
 
     if (answer === null) {
@@ -85,7 +86,15 @@ export function useQuiz() {
 
     isCorrect ? playCorrectSound() : playWrongSound();
 
-    dispatch({ type: "ANSWER", answer, isCorrect });
+    dispatch({
+      type: "ANSWER",
+      entry: {
+        question: currentQuestion.question,
+        selectedAnswer: answer,
+        correctAnswer: correct,
+        isCorrect,
+      },
+    });
   }, [questions, currentQuestionIndex]);
 
   const handleNext = () => {
