@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import Question from "./Question";
 import Result from "./Result";
 import Settings from "./Settings";
@@ -23,6 +23,19 @@ function Quiz() {
 
   const timePerQuestion = settings?.timePerQuestion || 15;
   const isLoading = settings && questions.length === 0 && !error;
+
+  useEffect(() => {
+    if (!showAnswer) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") {
+        handleNext();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showAnswer, handleNext]);
 
   if (!settings) return <Settings onStart={handleStart} />;
 

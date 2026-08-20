@@ -49,4 +49,38 @@ describe('Question', () => {
 
     expect(onAnswer).not.toHaveBeenCalled();
   });
+
+  it('selects an option when pressing its number key', async () => {
+    const user = userEvent.setup();
+    const onAnswer = vi.fn();
+    render(<Question data={data} onAnswer={onAnswer} showAnswer={false} selectedAnswer={null} />);
+
+    await user.keyboard('2');
+
+    expect(onAnswer).toHaveBeenCalledWith('4');
+  });
+
+  it('ignores number keys once the answer is already shown', async () => {
+    const user = userEvent.setup();
+    const onAnswer = vi.fn();
+    render(<Question data={data} onAnswer={onAnswer} showAnswer={true} selectedAnswer="4" />);
+
+    await user.keyboard('1');
+
+    expect(onAnswer).not.toHaveBeenCalled();
+  });
+
+  it('moves focus between options with the arrow keys', async () => {
+    const user = userEvent.setup();
+    render(<Question data={data} onAnswer={() => {}} showAnswer={false} selectedAnswer={null} />);
+
+    const buttons = screen.getAllByRole('button');
+    buttons[0].focus();
+
+    await user.keyboard('{ArrowDown}');
+    expect(buttons[1]).toHaveFocus();
+
+    await user.keyboard('{ArrowUp}');
+    expect(buttons[0]).toHaveFocus();
+  });
 });

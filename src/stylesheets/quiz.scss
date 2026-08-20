@@ -35,6 +35,11 @@ button:active {
   transform: scale(0.97);
 }
 
+button:focus-visible {
+  outline: 3px solid #4f46e5;
+  outline-offset: 2px;
+}
+
 .quiz-header {
   display: flex;
   justify-content: flex-end;

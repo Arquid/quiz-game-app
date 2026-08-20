@@ -94,4 +94,22 @@ describe('Quiz (integration)', () => {
 
     expect(screen.getByText('Quiz Settings')).toBeInTheDocument();
   });
+
+  it('advances to the next question when Enter is pressed after answering', async () => {
+    mockApi({
+      questions: [
+        { question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] },
+        { question: 'Q2', correct_answer: 'Right', incorrect_answers: ['Wrong'] },
+      ],
+    });
+    const user = userEvent.setup();
+    render(<Quiz />);
+
+    await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+    await user.click(await screen.findByRole('button', { name: 'Right' }));
+
+    await user.keyboard('{Enter}');
+
+    expect(await screen.findByText('Q2')).toBeInTheDocument();
+  });
 });
