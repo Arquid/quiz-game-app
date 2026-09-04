@@ -4,6 +4,8 @@
 
 A modern quiz application built with React. Users can customize quiz settings, answer timed questions, and see their results at the end.
 
+👉 **Live demo:** https://arquid.github.io/quiz-game-app/
+
 ---
 
 ## 🚀 Features
@@ -18,10 +20,14 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * ✅ Instant answer feedback (correct / wrong)
 * 📈 Detailed results (accuracy % and best streak)
 * 🔍 Review of wrong answers at the end (your answer vs. the correct one)
+* 🔁 Retry only the questions you got wrong, without a new API call
+* ⏳ Low-time warning (progress bar pulses in the last 5 seconds)
+* 🕒 Recent results history (last 10 quizzes, saved locally)
 * 🛑 Cancel quiz anytime and return to settings
 * 🔁 Restart quiz anytime
 * ⚠️ Error handling for API issues (questions & categories)
 * 🎲 Randomized answer order
+* ⌨️ Keyboard support (number keys to answer, arrows to navigate, Enter to continue)
 
 ---
 
@@ -62,6 +68,14 @@ Run the tests:
 ```bash
 npm test
 ```
+
+---
+
+## 🚢 Deployment
+
+Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+
+**One-time setup** (only needed once per repository): in GitHub, go to **Settings → Pages** and set **Source** to **GitHub Actions**. After that, every push to `main` updates the live demo automatically — no manual deploy step required.
 
 ---
 
@@ -111,7 +125,9 @@ src/
 │
 ├── utils/
 │   ├── sound.js
-│   └── sound.test.js
+│   ├── sound.test.js
+│   ├── history.js
+│   └── history.test.js
 │
 └── App.jsx
 ```
@@ -130,6 +146,7 @@ Tests live next to the files they cover (e.g. `Progress.jsx` + `Progress.test.js
 6. Correct answer is shown, with sound feedback (unless muted)
 7. Score, accuracy, and best streak are calculated at the end
 8. Any wrong answers are listed for review, alongside the correct answer
+9. Wrong answers can be retried immediately, or the run is saved to a local results history
 
 ---
 

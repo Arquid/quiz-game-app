@@ -102,4 +102,22 @@ body {
   .review-question {
     color: #f0f0f0;
   }
+
+  .history {
+    h3 {
+      color: #aaa;
+    }
+
+    li {
+      border-bottom-color: #333;
+    }
+
+    .history-date {
+      color: #999;
+    }
+
+    .history-score {
+      color: #f0f0f0;
+    }
+  }
 }

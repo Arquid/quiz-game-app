@@ -4,6 +4,7 @@ import "../stylesheets/progress.scss";
 function Progress({ current, total, timeLeft, timePerQuestion }) {
   const questionPercentage = total > 0 ? (current / total) * 100 : 0;
   const timePercentage = timePerQuestion > 0 ? (timeLeft / timePerQuestion) * 100 : 0;
+  const isLowTime = timeLeft > 0 && timeLeft <= 5;
 
   return (
     <div className="progress-container">
@@ -12,7 +13,7 @@ function Progress({ current, total, timeLeft, timePerQuestion }) {
           {current} / {total}
         </div>
       </div>
-      <div className="progress time-progress">
+      <div className={`progress time-progress ${isLowTime ? "low-time" : ""}`}>
         <div className="progress-bar" style={{ width: `${timePercentage}%` }}>
           {timeLeft}s
         </div>

@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useCallback } from "react";
 import { fetchQuizQuestions } from "../api/trivia";
 import { playCorrectSound, playWrongSound } from "../utils/sound";
+import { addHistoryEntry } from "../utils/history";
 
 export const initialState = {
   settings: null,
@@ -63,6 +64,14 @@ export function quizReducer(state, action) {
     case "TICK":
       return { ...state, timeLeft: Math.max(0, state.timeLeft - 1) };
 
+    case "RETRY_WRONG":
+      return {
+        ...initialState,
+        settings: state.settings,
+        questions: action.questions,
+        timeLeft: state.settings.timePerQuestion || 15,
+      };
+
     case "RESET":
       return initialState;
 
@@ -73,7 +82,7 @@ export function quizReducer(state, action) {
 
 export function useQuiz() {
   const [state, dispatch] = useReducer(quizReducer, initialState);
-  const { questions, currentQuestionIndex, showResult, settings, isPaused, timeLeft, showAnswer } = state;
+  const { questions, currentQuestionIndex, score, showResult, settings, isPaused, timeLeft, showAnswer, answerLog } = state;
 
   const handleAnswer = useCallback((answer) => {
     const currentQuestion = questions[currentQuestionIndex];
@@ -90,6 +99,7 @@ export function useQuiz() {
       type: "ANSWER",
       entry: {
         question: currentQuestion.question,
+        options: currentQuestion.options,
         selectedAnswer: answer,
         correctAnswer: correct,
         isCorrect,
@@ -98,7 +108,29 @@ export function useQuiz() {
   }, [questions, currentQuestionIndex]);
 
   const handleNext = () => {
+    const isLastQuestion = currentQuestionIndex + 1 >= questions.length;
+    if (isLastQuestion) {
+      addHistoryEntry({
+        date: new Date().toISOString(),
+        score,
+        totalQuestions: questions.length,
+      });
+    }
     dispatch({ type: "NEXT_QUESTION" });
+  };
+
+  const handleRetryWrong = () => {
+    const wrongQuestions = answerLog
+      .filter((entry) => !entry.isCorrect)
+      .map((entry) => ({
+        question: entry.question,
+        options: entry.options,
+        correctAnswer: entry.correctAnswer,
+      }));
+
+    if (wrongQuestions.length === 0) return;
+
+    dispatch({ type: "RETRY_WRONG", questions: wrongQuestions });
   };
 
   const handleStart = (newSettings) => {
@@ -151,5 +183,5 @@ export function useQuiz() {
     }
   }, [timeLeft, showAnswer, questions.length, showResult, handleAnswer]);
 
-  return { state, handleAnswer, handleNext, handleStart, handleRestart, handleCancel };
+  return { state, handleAnswer, handleNext, handleStart, handleRestart, handleCancel, handleRetryWrong };
 }

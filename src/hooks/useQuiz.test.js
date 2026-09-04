@@ -1,5 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import { quizReducer, initialState } from './useQuiz';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { quizReducer, initialState, useQuiz } from './useQuiz';
+import * as trivia from '../api/trivia';
+import * as history from '../utils/history';
+
+vi.mock('../utils/sound', () => ({
+  playCorrectSound: vi.fn(),
+  playWrongSound: vi.fn(),
+}));
 
 describe('quizReducer', () => {
   it('START_QUIZ resets state and sets timeLeft from settings', () => {
@@ -99,5 +107,112 @@ describe('quizReducer', () => {
     const dirtyState = { ...initialState, score: 10, settings: { amount: 5 }, showResult: true };
     const result = quizReducer(dirtyState, { type: 'RESET' });
     expect(result).toEqual(initialState);
+  });
+
+  it('RETRY_WRONG loads the given questions, keeps settings, and resets quiz progress', () => {
+    const settings = { timePerQuestion: 20 };
+    const state = {
+      ...initialState,
+      settings,
+      score: 3,
+      currentQuestionIndex: 2,
+      showResult: true,
+      answerLog: [{ question: 'Q1', isCorrect: false }],
+    };
+    const wrongQuestions = [{ question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' }];
+
+    const result = quizReducer(state, { type: 'RETRY_WRONG', questions: wrongQuestions });
+
+    expect(result.settings).toBe(settings);
+    expect(result.questions).toEqual(wrongQuestions);
+    expect(result.timeLeft).toBe(20);
+    expect(result.score).toBe(0);
+    expect(result.currentQuestionIndex).toBe(0);
+    expect(result.showResult).toBe(false);
+    expect(result.answerLog).toEqual([]);
+  });
+});
+
+describe('useQuiz', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    localStorage.clear();
+  });
+
+  it('saves a history entry only once the quiz is actually finished', async () => {
+    vi.spyOn(trivia, 'fetchQuizQuestions').mockResolvedValue([
+      { question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' },
+      { question: 'Q2', options: ['a', 'b'], correctAnswer: 'a' },
+    ]);
+    const addHistorySpy = vi.spyOn(history, 'addHistoryEntry');
+
+    const { result } = renderHook(() => useQuiz());
+
+    act(() => {
+      result.current.handleStart({ amount: 2, timePerQuestion: 15 });
+    });
+    await waitFor(() => expect(result.current.state.questions).toHaveLength(2));
+
+    act(() => result.current.handleAnswer('a'));
+    act(() => result.current.handleNext());
+
+    expect(addHistorySpy).not.toHaveBeenCalled();
+
+    act(() => result.current.handleAnswer('a'));
+    act(() => result.current.handleNext());
+
+    expect(addHistorySpy).toHaveBeenCalledTimes(1);
+    expect(addHistorySpy).toHaveBeenCalledWith(expect.objectContaining({ score: 2, totalQuestions: 2 }));
+  });
+
+  it('handleRetryWrong starts a new round using only the wrong questions', async () => {
+    vi.spyOn(trivia, 'fetchQuizQuestions').mockResolvedValue([
+      { question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' },
+      { question: 'Q2', options: ['c', 'd'], correctAnswer: 'c' },
+    ]);
+
+    const { result } = renderHook(() => useQuiz());
+
+    act(() => {
+      result.current.handleStart({ amount: 2, timePerQuestion: 15 });
+    });
+    await waitFor(() => expect(result.current.state.questions).toHaveLength(2));
+
+    act(() => result.current.handleAnswer('a'));
+    act(() => result.current.handleNext());
+    act(() => result.current.handleAnswer('d'));
+    act(() => result.current.handleNext());
+
+    expect(result.current.state.showResult).toBe(true);
+
+    act(() => result.current.handleRetryWrong());
+
+    expect(result.current.state.questions).toEqual([
+      { question: 'Q2', options: ['c', 'd'], correctAnswer: 'c' },
+    ]);
+    expect(result.current.state.showResult).toBe(false);
+    expect(result.current.state.score).toBe(0);
+  });
+
+  it('handleRetryWrong does nothing when there were no wrong answers', async () => {
+    vi.spyOn(trivia, 'fetchQuizQuestions').mockResolvedValue([
+      { question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' },
+    ]);
+
+    const { result } = renderHook(() => useQuiz());
+
+    act(() => {
+      result.current.handleStart({ amount: 1, timePerQuestion: 15 });
+    });
+    await waitFor(() => expect(result.current.state.questions).toHaveLength(1));
+
+    act(() => result.current.handleAnswer('a'));
+    act(() => result.current.handleNext());
+
+    const stateBefore = result.current.state;
+
+    act(() => result.current.handleRetryWrong());
+
+    expect(result.current.state).toBe(stateBefore);
   });
 });

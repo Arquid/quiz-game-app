@@ -78,4 +78,49 @@
       }
     }
   }
+
+  .retry-button {
+    display: block;
+    margin: 10px auto 0;
+    background-color: #e53e3e;
+
+    &:hover {
+      background-color: #c53030;
+    }
+  }
+
+  .history {
+    text-align: left;
+    margin: 20px 0 0;
+
+    h3 {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #666;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-date {
+      color: #888;
+    }
+
+    .history-score {
+      font-weight: bold;
+      color: #333;
+    }
+  }
 }

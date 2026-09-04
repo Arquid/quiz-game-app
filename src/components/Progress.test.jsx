@@ -24,4 +24,19 @@ describe('Progress', () => {
       expect(bar.style.width).not.toContain('NaN');
     });
   });
+
+  it('adds a low-time warning class when 5 seconds or less remain', () => {
+    const { container } = render(<Progress current={1} total={5} timeLeft={5} timePerQuestion={15} />);
+    expect(container.querySelector('.time-progress')).toHaveClass('low-time');
+  });
+
+  it('does not add the low-time warning class above the 5 second threshold', () => {
+    const { container } = render(<Progress current={1} total={5} timeLeft={6} timePerQuestion={15} />);
+    expect(container.querySelector('.time-progress')).not.toHaveClass('low-time');
+  });
+
+  it('does not add the low-time warning class once time has fully run out', () => {
+    const { container } = render(<Progress current={1} total={5} timeLeft={0} timePerQuestion={15} />);
+    expect(container.querySelector('.time-progress')).not.toHaveClass('low-time');
+  });
 });

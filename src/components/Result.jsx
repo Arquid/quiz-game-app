@@ -1,5 +1,6 @@
 import React from "react";
 import "../stylesheets/result.scss";
+import { getHistory } from "../utils/history";
 
 function getBestStreak(log) {
   let best = 0;
@@ -11,10 +12,11 @@ function getBestStreak(log) {
   return best;
 }
 
-function Result({ score, totalQuestions, answerLog, onRestart }) {
+function Result({ score, totalQuestions, answerLog, onRestart, onRetryWrong }) {
   const accuracy = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
   const bestStreak = getBestStreak(answerLog);
   const wrongAnswers = answerLog.filter((entry) => !entry.isCorrect);
+  const history = getHistory();
 
   return (
     <div className="result">
@@ -45,10 +47,27 @@ function Result({ score, totalQuestions, answerLog, onRestart }) {
               </li>
             ))}
           </ul>
+          <button className="retry-button" onClick={onRetryWrong}>
+            Retry Wrong Answers
+          </button>
         </div>
       )}
 
       <button onClick={onRestart}>Play Again</button>
+
+      {history.length > 0 && (
+        <div className="history">
+          <h3>Recent Results</h3>
+          <ul>
+            {history.map((entry, index) => (
+              <li key={index}>
+                <span className="history-date">{new Date(entry.date).toLocaleDateString()}</span>
+                <span className="history-score">{entry.score} / {entry.totalQuestions}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

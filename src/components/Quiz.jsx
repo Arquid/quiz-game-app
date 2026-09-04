@@ -7,7 +7,7 @@ import "../stylesheets/quiz.scss";
 import { useQuiz } from "../hooks/useQuiz";
 
 function Quiz() {
-  const { state, handleAnswer, handleNext, handleStart, handleRestart, handleCancel } = useQuiz();
+  const { state, handleAnswer, handleNext, handleStart, handleRestart, handleCancel, handleRetryWrong } = useQuiz();
   const {
     questions,
     currentQuestionIndex,
@@ -54,7 +54,13 @@ function Quiz() {
   );
 
   return showResult ? (
-    <Result score={score} totalQuestions={questions.length} onRestart={handleRestart} answerLog={answerLog} />
+    <Result
+      score={score}
+      totalQuestions={questions.length}
+      onRestart={handleRestart}
+      onRetryWrong={handleRetryWrong}
+      answerLog={answerLog}
+    />
   ) : (
     <div className="quiz-container">
       <div className="quiz-header">

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Result from './Result';
@@ -12,6 +12,10 @@ const makeEntry = (isCorrect, overrides = {}) => ({
 });
 
 describe('Result', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
   it('shows the score, accuracy, and best streak for a mixed answer log', () => {
     const answerLog = [makeEntry(true), makeEntry(true), makeEntry(false), makeEntry(true), makeEntry(false)];
     render(<Result score={3} totalQuestions={5} answerLog={answerLog} onRestart={() => {}} />);
@@ -72,5 +76,42 @@ describe('Result', () => {
     render(<Result score={0} totalQuestions={1} answerLog={answerLog} onRestart={() => {}} />);
 
     expect(screen.getByText(/Your answer: No answer \(time ran out\)/)).toBeInTheDocument();
+  });
+
+  it('shows a "Retry Wrong Answers" button when there are wrong answers, and calls onRetryWrong', async () => {
+    const user = userEvent.setup();
+    const onRetryWrong = vi.fn();
+    const answerLog = [makeEntry(true), makeEntry(false)];
+    render(<Result score={1} totalQuestions={2} answerLog={answerLog} onRestart={() => {}} onRetryWrong={onRetryWrong} />);
+
+    await user.click(screen.getByRole('button', { name: /Retry Wrong Answers/i }));
+
+    expect(onRetryWrong).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not show a "Retry Wrong Answers" button when every answer was correct', () => {
+    const answerLog = [makeEntry(true), makeEntry(true)];
+    render(<Result score={2} totalQuestions={2} answerLog={answerLog} onRestart={() => {}} onRetryWrong={() => {}} />);
+
+    expect(screen.queryByRole('button', { name: /Retry Wrong Answers/i })).not.toBeInTheDocument();
+  });
+
+  it('shows past results from history when available', () => {
+    localStorage.setItem(
+      'quizHistory',
+      JSON.stringify([{ date: '2026-01-01T00:00:00.000Z', score: 4, totalQuestions: 5 }])
+    );
+    const answerLog = [makeEntry(true)];
+    render(<Result score={1} totalQuestions={1} answerLog={answerLog} onRestart={() => {}} />);
+
+    expect(screen.getByText('Recent Results')).toBeInTheDocument();
+    expect(screen.getByText('4 / 5')).toBeInTheDocument();
+  });
+
+  it('does not show a history section when there is no saved history', () => {
+    const answerLog = [makeEntry(true)];
+    render(<Result score={1} totalQuestions={1} answerLog={answerLog} onRestart={() => {}} />);
+
+    expect(screen.queryByText('Recent Results')).not.toBeInTheDocument();
   });
 });
