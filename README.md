@@ -38,7 +38,8 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * **SCSS**
 * **Open Trivia DB API**
 * **Vitest + React Testing Library** (unit & component tests)
-* **GitHub Actions** (CI: lint, test, and build on every push/PR)
+* **Playwright** (production smoke tests)
+* **GitHub Actions** (CI: lint, test, and build on every push/PR; smoke test after every deploy)
 
 ---
 
@@ -69,11 +70,18 @@ Run the tests:
 npm test
 ```
 
+Run the production smoke tests (checks the live demo, not your local build):
+
+```bash
+npx playwright install --with-deps chromium   # first time only
+npm run test:e2e
+```
+
 ---
 
 ## 🚢 Deployment
 
-Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml).
+Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch.
 
 **One-time setup** (only needed once per repository): in GitHub, go to **Settings → Pages** and set **Source** to **GitHub Actions**. After that, every push to `main` updates the live demo automatically — no manual deploy step required.
 
@@ -133,6 +141,15 @@ src/
 ```
 
 Tests live next to the files they cover (e.g. `Progress.jsx` + `Progress.test.jsx`), which is the standard convention for Vitest/React projects — it keeps a test in sync automatically when its file is moved or renamed.
+
+Playwright's production smoke tests live separately at the repo root, since they test the deployed site rather than the source code:
+
+```
+e2e/
+└── production.spec.js
+
+playwright.config.js
+```
 
 ---
 
