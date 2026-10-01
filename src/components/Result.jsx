@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import "../stylesheets/result.scss";
-import { getHistory } from "../utils/history";
+import { getHistory, clearHistory } from "../utils/history";
 
 function getBestStreak(log) {
   let best = 0;
@@ -16,7 +16,14 @@ function Result({ score, totalQuestions, answerLog, onRestart, onRetryWrong }) {
   const accuracy = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
   const bestStreak = getBestStreak(answerLog);
   const wrongAnswers = answerLog.filter((entry) => !entry.isCorrect);
-  const history = getHistory();
+  const [history, setHistory] = useState(() => getHistory());
+
+  const handleClearHistory = () => {
+    if (window.confirm("Clear your saved quiz history? This cannot be undone.")) {
+      clearHistory();
+      setHistory([]);
+    }
+  };
 
   return (
     <div className="result">
@@ -66,6 +73,9 @@ function Result({ score, totalQuestions, answerLog, onRestart, onRetryWrong }) {
               </li>
             ))}
           </ul>
+          <button className="clear-history-button" onClick={handleClearHistory}>
+            Clear History
+          </button>
         </div>
       )}
     </div>

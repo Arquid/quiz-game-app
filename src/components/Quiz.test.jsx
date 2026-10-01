@@ -176,4 +176,23 @@ describe('Quiz (integration)', () => {
     expect(await screen.findByText('Recent Results')).toBeInTheDocument();
     expect(screen.getByText('1 / 1')).toBeInTheDocument();
   });
+
+  it('clears the results history from the result screen', async () => {
+    mockApi({
+      questions: [{ question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] }],
+    });
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const user = userEvent.setup();
+    render(<Quiz />);
+
+    await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+    await user.click(await screen.findByRole('button', { name: 'Right' }));
+    await user.click(screen.getByRole('button', { name: /Next Question/i }));
+    expect(await screen.findByText('Recent Results')).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /Clear History/i }));
+
+    expect(screen.queryByText('Recent Results')).not.toBeInTheDocument();
+    expect(localStorage.getItem('quizHistory')).toBeNull();
+  });
 });

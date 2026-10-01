@@ -22,7 +22,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * 🔍 Review of wrong answers at the end (your answer vs. the correct one)
 * 🔁 Retry only the questions you got wrong, without a new API call
 * ⏳ Low-time warning (progress bar pulses in the last 5 seconds)
-* 🕒 Recent results history (last 10 quizzes, saved locally), with a "Clear History" option
+* 🕒 Recent results history (last 10 quizzes, saved locally), shown on the result screen with a prominent "Clear History" button
 * 🛑 Cancel quiz anytime and return to settings
 * 🔁 Restart quiz anytime
 * ⚠️ Error handling for API issues (questions & categories)

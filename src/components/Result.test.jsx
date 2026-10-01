@@ -14,6 +14,7 @@ const makeEntry = (isCorrect, overrides = {}) => ({
 describe('Result', () => {
   beforeEach(() => {
     localStorage.clear();
+    vi.restoreAllMocks();
   });
 
   it('shows the score, accuracy, and best streak for a mixed answer log', () => {
@@ -113,5 +114,37 @@ describe('Result', () => {
     render(<Result score={1} totalQuestions={1} answerLog={answerLog} onRestart={() => {}} />);
 
     expect(screen.queryByText('Recent Results')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Clear History/i })).not.toBeInTheDocument();
+  });
+
+  it('shows a "Clear History" button next to the results, and clears the list after confirming', async () => {
+    localStorage.setItem(
+      'quizHistory',
+      JSON.stringify([{ date: '2026-01-01T00:00:00.000Z', score: 4, totalQuestions: 5 }])
+    );
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const user = userEvent.setup();
+    render(<Result score={1} totalQuestions={1} answerLog={[makeEntry(true)]} onRestart={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: /Clear History/i }));
+
+    expect(localStorage.getItem('quizHistory')).toBeNull();
+    expect(screen.queryByText('Recent Results')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Clear History/i })).not.toBeInTheDocument();
+  });
+
+  it('keeps the history when clearing is not confirmed', async () => {
+    localStorage.setItem(
+      'quizHistory',
+      JSON.stringify([{ date: '2026-01-01T00:00:00.000Z', score: 4, totalQuestions: 5 }])
+    );
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const user = userEvent.setup();
+    render(<Result score={1} totalQuestions={1} answerLog={[makeEntry(true)]} onRestart={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: /Clear History/i }));
+
+    expect(localStorage.getItem('quizHistory')).not.toBeNull();
+    expect(screen.getByText('Recent Results')).toBeInTheDocument();
   });
 });

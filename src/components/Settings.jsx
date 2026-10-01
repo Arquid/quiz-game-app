@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState} from "react";
 import axios from "axios";
 import "../stylesheets/settings.scss";
-import { getHistory, clearHistory } from "../utils/history";
 
 const STORAGE_KEY = "quizSettings";
 
@@ -24,8 +23,6 @@ function Settings({ onStart }) {
   const [difficulty, setDifficulty] = useState(savedSettings.difficulty ?? "");
   const [type, setType] = useState(savedSettings.type ?? "");
   const [timePerQuestion, setTimePerQuestion] = useState(savedSettings.timePerQuestion ?? 15);
-  const [history, setHistory] = useState(() => getHistory());
-
   useEffect(() => {
     axios.get("https://opentdb.com/api_category.php")
       .then(response => setCategories(response.data.trivia_categories))
@@ -50,13 +47,6 @@ function Settings({ onStart }) {
     if (Number.isNaN(value)) return 5;
     return Math.min(60, Math.max(5, value));
   }
-
-  const handleClearHistory = () => {
-    if (window.confirm("Clear your saved quiz history? This cannot be undone.")) {
-      clearHistory();
-      setHistory([]);
-    }
-  };
 
   return (
     <div className="settings">
@@ -111,11 +101,6 @@ function Settings({ onStart }) {
       </label>
       {categoryError && <p className="category-error">{categoryError}</p>}
       <button onClick={startQuiz}>Start Quiz</button>
-      {history.length > 0 && (
-        <button className="clear-history-button" onClick={handleClearHistory}>
-          Clear History
-        </button>
-      )}
     </div>
   );
 }

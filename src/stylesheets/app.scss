@@ -119,13 +119,15 @@ body {
     .history-score {
       color: #f0f0f0;
     }
-  }
 
-  .clear-history-button {
-    color: #999;
-
-    &:hover {
+    .clear-history-button {
       color: #f87171;
+      border-color: #f87171;
+
+      &:hover {
+        background-color: #f87171;
+        color: #121212;
+      }
     }
   }
 }

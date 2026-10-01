@@ -24,20 +24,3 @@
   text-align: center;
   color: #e53e3e;
 }
-
-.clear-history-button {
-  align-self: center;
-  background: none;
-  color: #888;
-  text-decoration: underline;
-  padding: 0;
-  margin-top: -10px;
-  font-size: 0.85rem;
-  font-weight: normal;
-
-  &:hover {
-    background: none;
-    color: #e53e3e;
-    transform: none;
-  }
-}

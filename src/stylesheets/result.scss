@@ -122,5 +122,20 @@
       font-weight: bold;
       color: #333;
     }
+
+    .clear-history-button {
+      display: block;
+      margin: 15px auto 0;
+      padding: 8px 20px;
+      background-color: transparent;
+      color: #e53e3e;
+      border: 2px solid #e53e3e;
+      font-size: 0.9rem;
+
+      &:hover {
+        background-color: #e53e3e;
+        color: #fff;
+      }
+    }
   }
 }
