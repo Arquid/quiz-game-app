@@ -19,3 +19,11 @@ export function addHistoryEntry(entry) {
   }
   return history;
 }
+
+export function clearHistory() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // localStorage unavailable - nothing to clear
+  }
+}

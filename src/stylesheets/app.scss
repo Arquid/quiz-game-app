@@ -120,4 +120,12 @@ body {
       color: #f0f0f0;
     }
   }
+
+  .clear-history-button {
+    color: #999;
+
+    &:hover {
+      color: #f87171;
+    }
+  }
 }

@@ -51,4 +51,34 @@ describe('Settings', () => {
     expect(screen.getByLabelText(/Number of Questions/i)).toHaveValue(7);
     expect(screen.getByLabelText(/Time per Question/i)).toHaveValue(25);
   });
+
+  it('does not show a "Clear History" button when there is no saved history', () => {
+    render(<Settings onStart={() => {}} />);
+
+    expect(screen.queryByRole('button', { name: /Clear History/i })).not.toBeInTheDocument();
+  });
+
+  it('shows a "Clear History" button when history exists, and removes it after confirming', async () => {
+    localStorage.setItem('quizHistory', JSON.stringify([{ date: '2026-01-01', score: 3, totalQuestions: 5 }]));
+    vi.spyOn(window, 'confirm').mockReturnValue(true);
+    const user = userEvent.setup();
+    render(<Settings onStart={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: /Clear History/i }));
+
+    expect(localStorage.getItem('quizHistory')).toBeNull();
+    expect(screen.queryByRole('button', { name: /Clear History/i })).not.toBeInTheDocument();
+  });
+
+  it('keeps the history when clearing is not confirmed', async () => {
+    localStorage.setItem('quizHistory', JSON.stringify([{ date: '2026-01-01', score: 3, totalQuestions: 5 }]));
+    vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const user = userEvent.setup();
+    render(<Settings onStart={() => {}} />);
+
+    await user.click(screen.getByRole('button', { name: /Clear History/i }));
+
+    expect(localStorage.getItem('quizHistory')).not.toBeNull();
+    expect(screen.getByRole('button', { name: /Clear History/i })).toBeInTheDocument();
+  });
 });

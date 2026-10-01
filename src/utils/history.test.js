@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { getHistory, addHistoryEntry } from './history';
+import { getHistory, addHistoryEntry, clearHistory } from './history';
 
 describe('history', () => {
   beforeEach(() => {
@@ -36,5 +36,17 @@ describe('history', () => {
     expect(history).toHaveLength(10);
     expect(history[0].date).toBe('entry-11');
     expect(history[9].date).toBe('entry-2');
+  });
+
+  it('clearHistory removes all saved entries', () => {
+    addHistoryEntry({ date: '2026-01-01', score: 3, totalQuestions: 5 });
+
+    clearHistory();
+
+    expect(getHistory()).toEqual([]);
+  });
+
+  it('clearHistory does not throw when there is nothing to clear', () => {
+    expect(() => clearHistory()).not.toThrow();
   });
 });
