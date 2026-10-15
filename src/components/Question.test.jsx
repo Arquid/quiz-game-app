@@ -70,6 +70,20 @@ describe('Question', () => {
     expect(onAnswer).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ['Ctrl', '{Control>}1{/Control}'],
+    ['Meta', '{Meta>}1{/Meta}'],
+    ['Alt', '{Alt>}1{/Alt}'],
+  ])('regression: %s+number (browser shortcuts) does not answer the question', async (_name, keys) => {
+    const user = userEvent.setup();
+    const onAnswer = vi.fn();
+    render(<Question data={data} onAnswer={onAnswer} showAnswer={false} selectedAnswer={null} />);
+
+    await user.keyboard(keys);
+
+    expect(onAnswer).not.toHaveBeenCalled();
+  });
+
   it('moves focus between options with the arrow keys', async () => {
     const user = userEvent.setup();
     render(<Question data={data} onAnswer={() => {}} showAnswer={false} selectedAnswer={null} />);

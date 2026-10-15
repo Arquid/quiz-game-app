@@ -6,7 +6,7 @@ function Question({ data, onAnswer, showAnswer, selectedAnswer }) {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (showAnswer) return;
+      if (showAnswer || e.ctrlKey || e.metaKey || e.altKey) return;
 
       const index = Number(e.key) - 1;
       if (index >= 0 && index < data.options.length) {

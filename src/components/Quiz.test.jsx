@@ -113,6 +113,58 @@ describe('Quiz (integration)', () => {
     expect(await screen.findByText('Q2')).toBeInTheDocument();
   });
 
+  it('moves focus to the "Next Question" button once an answer is shown', async () => {
+    mockApi({
+      questions: [
+        { question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] },
+        { question: 'Q2', correct_answer: 'Right', incorrect_answers: ['Wrong'] },
+      ],
+    });
+    const user = userEvent.setup();
+    render(<Quiz />);
+
+    await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+    await user.click(await screen.findByRole('button', { name: 'Right' }));
+
+    expect(screen.getByRole('button', { name: /Next Question/i })).toHaveFocus();
+  });
+
+  it('regression: extra Enter presses on the result screen do not duplicate history entries', async () => {
+    mockApi({
+      questions: [{ question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] }],
+    });
+    const user = userEvent.setup();
+    render(<Quiz />);
+
+    await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+    await user.click(await screen.findByRole('button', { name: 'Right' }));
+    await user.keyboard('{Enter}');
+    await screen.findByText('Quiz Completed!');
+
+    await user.keyboard('{Enter}{Enter}');
+
+    expect(JSON.parse(localStorage.getItem('quizHistory'))).toHaveLength(1);
+  });
+
+  it('regression: Enter on "Play Again" restarts without adding a history entry', async () => {
+    mockApi({
+      questions: [{ question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] }],
+    });
+    const user = userEvent.setup();
+    render(<Quiz />);
+
+    await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+    await user.click(await screen.findByRole('button', { name: 'Right' }));
+    await user.keyboard('{Enter}');
+    await screen.findByText('Quiz Completed!');
+
+    screen.getByRole('button', { name: /Play Again/i }).focus();
+    await user.keyboard('{Enter}');
+
+    expect(screen.getByText('Quiz Settings')).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem('quizHistory'))).toHaveLength(1);
+  });
+
   it('lists a wrong answer in the result screen review section, end to end', async () => {
     mockApi({
       questions: [{ question: 'What is 2 + 2?', correct_answer: '4', incorrect_answers: ['5'] }],

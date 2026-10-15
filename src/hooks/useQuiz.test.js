@@ -194,6 +194,29 @@ describe('useQuiz', () => {
     expect(result.current.state.score).toBe(0);
   });
 
+  it('regression: handleNext is a no-op once the result screen is shown (no duplicate history)', async () => {
+    vi.spyOn(trivia, 'fetchQuizQuestions').mockResolvedValue([
+      { question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' },
+    ]);
+    const addHistorySpy = vi.spyOn(history, 'addHistoryEntry');
+
+    const { result } = renderHook(() => useQuiz());
+
+    act(() => {
+      result.current.handleStart({ amount: 1, timePerQuestion: 15 });
+    });
+    await waitFor(() => expect(result.current.state.questions).toHaveLength(1));
+
+    act(() => result.current.handleAnswer('a'));
+    act(() => result.current.handleNext());
+    expect(result.current.state.showResult).toBe(true);
+
+    act(() => result.current.handleNext());
+    act(() => result.current.handleNext());
+
+    expect(addHistorySpy).toHaveBeenCalledTimes(1);
+  });
+
   it('handleRetryWrong does nothing when there were no wrong answers', async () => {
     vi.spyOn(trivia, 'fetchQuizQuestions').mockResolvedValue([
       { question: 'Q1', options: ['a', 'b'], correctAnswer: 'a' },

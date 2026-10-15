@@ -108,6 +108,7 @@ export function useQuiz() {
   }, [questions, currentQuestionIndex]);
 
   const handleNext = () => {
+    if (showResult) return;
     const isLastQuestion = currentQuestionIndex + 1 >= questions.length;
     if (isLastQuestion) {
       addHistoryEntry({

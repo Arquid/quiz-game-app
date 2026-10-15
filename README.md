@@ -27,7 +27,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * 🔁 Restart quiz anytime
 * ⚠️ Error handling for API issues (questions & categories)
 * 🎲 Randomized answer order
-* ⌨️ Keyboard support (number keys to answer, arrows to navigate, Enter to continue)
+* ⌨️ Keyboard support (number keys to answer, arrows to navigate, focus jumps to "Next Question" so Enter continues; browser shortcuts like Ctrl+1 are ignored)
 
 ---
 
@@ -137,7 +137,8 @@ src/
 │   ├── history.js
 │   └── history.test.js
 │
-└── App.jsx
+├── App.jsx
+└── App.test.jsx
 ```
 
 Tests live next to the files they cover (e.g. `Progress.jsx` + `Progress.test.jsx`), which is the standard convention for Vitest/React projects — it keeps a test in sync automatically when its file is moved or renamed.

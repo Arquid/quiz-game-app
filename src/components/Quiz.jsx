@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Question from "./Question";
 import Result from "./Result";
 import Settings from "./Settings";
@@ -24,18 +24,11 @@ function Quiz() {
   const timePerQuestion = settings?.timePerQuestion || 15;
   const isLoading = settings && questions.length === 0 && !error;
 
+  const nextButtonRef = useRef(null);
+
   useEffect(() => {
-    if (!showAnswer) return;
-
-    const handleKeyDown = (e) => {
-      if (e.key === "Enter") {
-        handleNext();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [showAnswer, handleNext]);
+    if (showAnswer && !showResult) nextButtonRef.current?.focus();
+  }, [showAnswer, showResult, currentQuestionIndex]);
 
   if (!settings) return <Settings onStart={handleStart} />;
 
@@ -89,7 +82,7 @@ function Quiz() {
         />
       )}
       {showAnswer && (
-        <button className="next-button" onClick={handleNext}>
+        <button className="next-button" ref={nextButtonRef} onClick={handleNext}>
           Next Question
         </button>
       )}
