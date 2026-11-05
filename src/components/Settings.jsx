@@ -13,16 +13,26 @@ function getSavedSettings() {
   }
 }
 
+const AMOUNT_LIMITS = { min: 1, max: 50 };
+const TIME_LIMITS = { min: 5, max: 60 };
+
+const clampToLimits = (raw, { min, max }) => {
+  const value = parseInt(raw, 10);
+  if (Number.isNaN(value)) return min;
+  return Math.min(max, Math.max(min, value));
+};
+
 function Settings({ onStart }) {
   const savedSettings = useMemo(() => getSavedSettings(), []);
 
   const [categories, setCategories] = useState([]);
   const [categoryError, setCategoryError] = useState(null);
-  const [amount, setAmount] = useState(savedSettings.amount ?? 10);
   const [category, setCategory] = useState(savedSettings.category ?? "");
   const [difficulty, setDifficulty] = useState(savedSettings.difficulty ?? "");
   const [type, setType] = useState(savedSettings.type ?? "");
-  const [timePerQuestion, setTimePerQuestion] = useState(savedSettings.timePerQuestion ?? 15);
+  const [amountInput, setAmountInput] = useState(String(savedSettings.amount ?? 10));
+  const [timeInput, setTimeInput] = useState(String(savedSettings.timePerQuestion ?? 15));
+
   useEffect(() => {
     axios.get("https://opentdb.com/api_category.php")
       .then(response => setCategories(response.data.trivia_categories))
@@ -33,20 +43,12 @@ function Settings({ onStart }) {
   }, []);
 
   const startQuiz = () => {
+    const amount = clampToLimits(amountInput, AMOUNT_LIMITS);
+    const timePerQuestion = clampToLimits(timeInput, TIME_LIMITS);
     const newSettings = { amount, category, difficulty, type, timePerQuestion };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
     onStart(newSettings);
   };
-
-  const clampAmount = (value) => {
-    if (Number.isNaN(value)) return 1;
-    return Math.min(50, Math.max(1, value));
-  }
-
-  const clampTime = (value) => {
-    if (Number.isNaN(value)) return 5;
-    return Math.min(60, Math.max(5, value));
-  }
 
   return (
     <div className="settings">
@@ -57,8 +59,9 @@ function Settings({ onStart }) {
           type="number"
           min="1"
           max="50"
-          value={amount}
-          onChange={(e) => setAmount(clampAmount(parseInt(e.target.value, 10)))}
+          value={amountInput}
+          onChange={(e) => setAmountInput(e.target.value)}
+          onBlur={() => setAmountInput(String(clampToLimits(amountInput, AMOUNT_LIMITS)))}
         />
       </label>
       <label>
@@ -67,8 +70,9 @@ function Settings({ onStart }) {
           type="number"
           min="5"
           max="60"
-          value={timePerQuestion}
-          onChange={(e) => setTimePerQuestion(clampTime(parseInt(e.target.value, 10)))}
+          value={timeInput}
+          onChange={(e) => setTimeInput(e.target.value)}
+          onBlur={() => setTimeInput(String(clampToLimits(timeInput, TIME_LIMITS)))}
         />
       </label>
       <label>
