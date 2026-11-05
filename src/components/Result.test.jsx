@@ -109,6 +109,18 @@ describe('Result', () => {
     expect(screen.getByText('4 / 5')).toBeInTheDocument();
   });
 
+  it('regression: does not crash when the saved history is corrupted, and still shows valid entries', () => {
+    localStorage.setItem(
+      'quizHistory',
+      JSON.stringify([null, 'x', { date: 'nope' }, { date: '2026-01-01T00:00:00.000Z', score: 4, totalQuestions: 5 }])
+    );
+
+    render(<Result score={1} totalQuestions={1} answerLog={[makeEntry(true)]} onRestart={() => {}} />);
+
+    expect(screen.getByText('Recent Results')).toBeInTheDocument();
+    expect(screen.getByText('4 / 5')).toBeInTheDocument();
+  });
+
   it('does not show a history section when there is no saved history', () => {
     const answerLog = [makeEntry(true)];
     render(<Result score={1} totalQuestions={1} answerLog={answerLog} onRestart={() => {}} />);

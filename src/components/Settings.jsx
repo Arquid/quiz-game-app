@@ -7,7 +7,7 @@ const STORAGE_KEY = "quizSettings";
 function getSavedSettings() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : {};
+    return saved ? sanitizeSettings(JSON.parse(saved)) : {};
   } catch {
     return {};
   }
@@ -21,6 +21,23 @@ const clampToLimits = (raw, { min, max }) => {
   if (Number.isNaN(value)) return min;
   return Math.min(max, Math.max(min, value));
 };
+
+const DIFFICULTIES = ["", "easy", "medium", "hard"];
+const QUESTION_TYPES = ["", "multiple", "boolean"];
+
+const isInRange = (value, { min, max }) => Number.isInteger(value) && value >= min && value <= max;
+
+function sanitizeSettings(raw) {
+  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) return {};
+
+  const clean = {};
+  if (isInRange(raw.amount, AMOUNT_LIMITS)) clean.amount = raw.amount;
+  if (isInRange(raw.timePerQuestion, TIME_LIMITS)) clean.timePerQuestion = raw.timePerQuestion;
+  if (typeof raw.category === "string" && /^\d*$/.test(raw.category)) clean.category = raw.category;
+  if (DIFFICULTIES.includes(raw.difficulty)) clean.difficulty = raw.difficulty;
+  if (QUESTION_TYPES.includes(raw.type)) clean.type = raw.type;
+  return clean;
+}
 
 function Settings({ onStart }) {
   const savedSettings = useMemo(() => getSavedSettings(), []);

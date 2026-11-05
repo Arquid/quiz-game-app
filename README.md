@@ -12,7 +12,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 
 * 🎯 Custom quiz settings (amount, category, difficulty, type)
 * ⏱ Custom timer per question
-* 💾 Settings saved automatically (localStorage)
+* 💾 Settings saved automatically (localStorage), validated on load so corrupted data falls back to defaults
 * 🌙 Dark mode toggle
 * 🔊 Sound effects with mute toggle
 * 🎨 Animations (transitions, answer feedback, loading spinner)

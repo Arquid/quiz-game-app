@@ -106,6 +106,78 @@ describe('Settings', () => {
     expect(screen.getByLabelText(/Time per Question/i)).toHaveValue(25);
   });
 
+  it.each([
+    ['amount is not a number', { amount: 'abc' }, /Number of Questions/i, 10],
+    ['amount is too large', { amount: 9999 }, /Number of Questions/i, 10],
+    ['amount is zero', { amount: 0 }, /Number of Questions/i, 10],
+    ['amount is a fraction', { amount: 7.5 }, /Number of Questions/i, 10],
+    ['amount is a numeric string', { amount: '7' }, /Number of Questions/i, 10],
+    ['time is too large', { timePerQuestion: 9999 }, /Time per Question/i, 15],
+    ['time is below the minimum', { timePerQuestion: 2 }, /Time per Question/i, 15],
+    ['time is a numeric string', { timePerQuestion: '20' }, /Time per Question/i, 15],
+  ])('regression: falls back to the default when saved %s', (_name, saved, label, expected) => {
+    localStorage.setItem('quizSettings', JSON.stringify(saved));
+
+    render(<Settings onStart={() => {}} />);
+
+    expect(screen.getByLabelText(label)).toHaveValue(expected);
+  });
+
+  it.each([
+    ['difficulty', { difficulty: 'zzz' }, /Difficulty/i],
+    ['type', { type: 'zzz' }, /Question Type/i],
+    ['category (not an id)', { category: 'abc' }, /Category/i],
+    ['category (a number instead of a string)', { category: 42 }, /Category/i],
+  ])('regression: ignores an invalid saved %s', (_name, saved, label) => {
+    localStorage.setItem('quizSettings', JSON.stringify(saved));
+
+    render(<Settings onStart={() => {}} />);
+
+    expect(screen.getByLabelText(label)).toHaveValue('');
+  });
+
+  it.each([['null'], ['[]'], ['"text"'], ['42'], ['not json']])(
+    'regression: does not crash and uses defaults when the saved settings are %s',
+    (stored) => {
+      localStorage.setItem('quizSettings', stored);
+
+      render(<Settings onStart={() => {}} />);
+
+      expect(screen.getByLabelText(/Number of Questions/i)).toHaveValue(10);
+      expect(screen.getByLabelText(/Time per Question/i)).toHaveValue(15);
+    }
+  );
+
+  it('keeps the valid saved fields when other saved fields are invalid', async () => {
+    axios.get.mockResolvedValue({ data: { trivia_categories: [{ id: 9, name: 'General Knowledge' }] } });
+    localStorage.setItem(
+      'quizSettings',
+      JSON.stringify({ amount: 7, timePerQuestion: 9999, category: '9', difficulty: 'hard', type: 'zzz' })
+    );
+
+    render(<Settings onStart={() => {}} />);
+    await screen.findByRole('option', { name: 'General Knowledge' });
+
+    expect(screen.getByLabelText(/Number of Questions/i)).toHaveValue(7);
+    expect(screen.getByLabelText(/Time per Question/i)).toHaveValue(15);
+    expect(screen.getByLabelText(/Category/i)).toHaveValue('9');
+    expect(screen.getByLabelText(/Difficulty/i)).toHaveValue('hard');
+    expect(screen.getByLabelText(/Question Type/i)).toHaveValue('');
+  });
+
+  it('regression: starting with corrupted saved settings sends valid values to the API layer', () => {
+    localStorage.setItem(
+      'quizSettings',
+      JSON.stringify({ amount: 'abc', timePerQuestion: 9999, category: 42, difficulty: 'zzz' })
+    );
+    const onStart = vi.fn();
+    render(<Settings onStart={onStart} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /Start Quiz/i }));
+
+    expect(onStart).toHaveBeenCalledWith({ amount: 10, category: '', difficulty: '', type: '', timePerQuestion: 15 });
+  });
+
   it('no longer shows a "Clear History" button (it lives on the result screen)', () => {
     localStorage.setItem('quizHistory', JSON.stringify([{ date: '2026-01-01', score: 3, totalQuestions: 5 }]));
     render(<Settings onStart={() => {}} />);

@@ -1,10 +1,21 @@
 const STORAGE_KEY = "quizHistory";
 const MAX_ENTRIES = 10;
 
+const isValidEntry = (entry) =>
+  entry !== null &&
+  typeof entry === "object" &&
+  typeof entry.date === "string" &&
+  !Number.isNaN(Date.parse(entry.date)) &&
+  Number.isInteger(entry.totalQuestions) &&
+  entry.totalQuestions > 0 &&
+  Number.isInteger(entry.score) &&
+  entry.score >= 0 &&
+  entry.score <= entry.totalQuestions;
+
 export function getHistory() {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return Array.isArray(saved) ? saved.filter(isValidEntry).slice(0, MAX_ENTRIES) : [];
   } catch {
     return [];
   }
