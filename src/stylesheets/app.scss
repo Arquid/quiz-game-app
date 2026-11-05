@@ -9,6 +9,7 @@ body {
   min-height: 100vh;
   display: flow-root;
   transition: background-color 0.3s;
+  padding-inline: 16px;
 }
 
 @keyframes fadeIn {
@@ -50,6 +51,22 @@ body {
 
 .mute-toggle.muted {
   background-color: #555;
+}
+
+@media (max-width: 900px) {
+  .app-controls {
+    position: static;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-top: 12px;
+  }
+
+  .app .settings,
+  .app .quiz-container,
+  .app .result {
+    margin-top: 16px;
+    margin-bottom: 24px;
+  }
 }
 
 .app.dark {

@@ -70,7 +70,7 @@ Run the tests:
 npm test
 ```
 
-Run the production smoke tests (checks the live demo, not your local build):
+Run the Playwright tests (production smoke test + responsive layout check; by default they target the live demo, not your local build — set `E2E_BASE_URL=http://localhost:5173/` while `npm run dev` is running to test local changes):
 
 ```bash
 npx playwright install --with-deps chromium   # first time only
@@ -81,7 +81,7 @@ npm run test:e2e
 
 ## 🚢 Deployment
 
-Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch.
+Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content.
 
 **One-time setup** (only needed once per repository): in GitHub, go to **Settings → Pages** and set **Source** to **GitHub Actions**. After that, every push to `main` updates the live demo automatically — no manual deploy step required.
 
@@ -147,7 +147,8 @@ Playwright's production smoke tests live separately at the repo root, since they
 
 ```
 e2e/
-└── production.spec.js
+├── production.spec.js
+└── layout.spec.js
 
 playwright.config.js
 ```
