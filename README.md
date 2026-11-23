@@ -81,7 +81,7 @@ npm run test:e2e
 
 ## 🚢 Deployment
 
-Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content, and a third ([`e2e/contrast.spec.js`](e2e/contrast.spec.js)) checks in both themes that all visible text meets WCAG AA color contrast (4.5:1).
+Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content, and a third ([`e2e/contrast.spec.js`](e2e/contrast.spec.js)) checks in both themes that all visible text meets WCAG AA color contrast (4.5:1), and a fourth ([`e2e/structure.spec.js`](e2e/structure.spec.js)) checks the page structure screen readers rely on (one banner, one main landmark, one `<h1>`, no skipped heading levels, no text outside landmarks).
 
 **One-time setup** (only needed once per repository): in GitHub, go to **Settings → Pages** and set **Source** to **GitHub Actions**. After that, every push to `main` updates the live demo automatically — no manual deploy step required.
 
@@ -149,7 +149,8 @@ Playwright's production smoke tests live separately at the repo root, since they
 e2e/
 ├── production.spec.js
 ├── layout.spec.js
-└── contrast.spec.js
+├── contrast.spec.js
+└── structure.spec.js
 
 playwright.config.js
 ```

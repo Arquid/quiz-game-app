@@ -17,15 +17,18 @@ function App() {
 
   return (
     <div className={`app ${darkMode ? "dark" : ""}`}>
-      <div className="app-controls">
+      <header className="app-controls">
+        <h1 className="visually-hidden">Quiz App</h1>
         <button className="theme-toggle" onClick={() => setDarkMode((prev) => !prev)}>
           {darkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
         </button>
         <button className={`mute-toggle ${isMuted ? "muted" : ""}`} onClick={toggleMute}>
           {isMuted ? "🔇 Muted" : "🔊 Sound On"}
         </button>
-      </div>
-      <Quiz />
+      </header>
+      <main>
+        <Quiz />
+      </main>
     </div>
   );
 }
