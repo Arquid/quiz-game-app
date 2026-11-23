@@ -25,6 +25,26 @@ describe('Progress', () => {
     });
   });
 
+  it('exposes the question progress as a progressbar with readable values', () => {
+    render(<Progress current={2} total={5} timeLeft={10} timePerQuestion={15} />);
+
+    const bar = screen.getByRole('progressbar', { name: 'Question progress' });
+
+    expect(bar).toHaveAttribute('aria-valuemin', '0');
+    expect(bar).toHaveAttribute('aria-valuemax', '5');
+    expect(bar).toHaveAttribute('aria-valuenow', '2');
+    expect(bar).toHaveAttribute('aria-valuetext', 'Question 2 of 5');
+  });
+
+  it('exposes the countdown as a timer that is not announced every second', () => {
+    render(<Progress current={1} total={5} timeLeft={13} timePerQuestion={15} />);
+
+    const timer = screen.getByRole('timer', { name: 'Time left: 13 seconds' });
+
+    expect(timer).toBeInTheDocument();
+    expect(timer).not.toHaveAttribute('aria-live');
+  });
+
   it('adds a low-time warning class when 5 seconds or less remain', () => {
     const { container } = render(<Progress current={1} total={5} timeLeft={5} timePerQuestion={15} />);
     expect(container.querySelector('.time-progress')).toHaveClass('low-time');

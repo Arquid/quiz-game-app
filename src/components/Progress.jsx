@@ -8,12 +8,24 @@ function Progress({ current, total, timeLeft, timePerQuestion }) {
 
   return (
     <div className="progress-container">
-      <div className="progress question-progress">
+      <div
+        className="progress question-progress"
+        role="progressbar"
+        aria-label="Question progress"
+        aria-valuemin={0}
+        aria-valuemax={total}
+        aria-valuenow={current}
+        aria-valuetext={`Question ${current} of ${total}`}
+      >
         <div className="progress-bar" style={{ width: `${questionPercentage}%` }}>
           {current} / {total}
         </div>
       </div>
-      <div className={`progress time-progress ${isLowTime ? "low-time" : ""}`}>
+      <div
+        className={`progress time-progress ${isLowTime ? "low-time" : ""}`}
+        role="timer"
+        aria-label={`Time left: ${timeLeft} seconds`}
+      >
         <div className="progress-bar" style={{ width: `${timePercentage}%` }}>
           {timeLeft}s
         </div>

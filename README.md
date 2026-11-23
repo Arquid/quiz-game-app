@@ -27,6 +27,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * 🔁 Restart quiz anytime
 * ⚠️ Error handling for API issues (questions & categories)
 * 🎲 Randomized answer order
+* ♿ Screen reader support (landmarks, one `<h1>`, spoken answer feedback and time warnings)
 * ⌨️ Keyboard support (number keys to answer, arrows to navigate, focus jumps to "Next Question" so Enter continues; browser shortcuts like Ctrl+1 are ignored)
 
 ---
@@ -81,7 +82,7 @@ npm run test:e2e
 
 ## 🚢 Deployment
 
-Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content, and a third ([`e2e/contrast.spec.js`](e2e/contrast.spec.js)) checks in both themes that all visible text meets WCAG AA color contrast (4.5:1), and a fourth ([`e2e/structure.spec.js`](e2e/structure.spec.js)) checks the page structure screen readers rely on (one banner, one main landmark, one `<h1>`, no skipped heading levels, no text outside landmarks).
+Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content, and a third ([`e2e/contrast.spec.js`](e2e/contrast.spec.js)) checks in both themes that all visible text meets WCAG AA color contrast (4.5:1), and a fourth ([`e2e/structure.spec.js`](e2e/structure.spec.js)) checks the page structure screen readers rely on (one banner, one main landmark, one `<h1>`, no skipped heading levels, no text outside landmarks), and a fifth ([`e2e/announcements.spec.js`](e2e/announcements.spec.js)) checks what screen readers are told: time warnings at 10 and 5 seconds, and whether each answer was correct.
 
 **One-time setup** (only needed once per repository): in GitHub, go to **Settings → Pages** and set **Source** to **GitHub Actions**. After that, every push to `main` updates the live demo automatically — no manual deploy step required.
 
@@ -135,7 +136,9 @@ src/
 │   ├── sound.js
 │   ├── sound.test.js
 │   ├── history.js
-│   └── history.test.js
+│   ├── history.test.js
+│   ├── announcements.js
+│   └── announcements.test.js
 │
 ├── App.jsx
 └── App.test.jsx
@@ -150,7 +153,8 @@ e2e/
 ├── production.spec.js
 ├── layout.spec.js
 ├── contrast.spec.js
-└── structure.spec.js
+├── structure.spec.js
+└── announcements.spec.js
 
 playwright.config.js
 ```

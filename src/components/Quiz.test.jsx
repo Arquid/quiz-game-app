@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axios from 'axios';
 import Quiz from './Quiz';
@@ -246,5 +246,88 @@ describe('Quiz (integration)', () => {
 
     expect(screen.queryByText('Recent Results')).not.toBeInTheDocument();
     expect(localStorage.getItem('quizHistory')).toBeNull();
+  });
+
+  describe('screen reader announcements', () => {
+    const oneQuestion = [{ question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] }];
+
+    it('has a polite status region that starts empty and announces a correct answer', async () => {
+      mockApi({ questions: oneQuestion });
+      const user = userEvent.setup();
+      render(<Quiz />);
+
+      await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+      await screen.findByRole('button', { name: 'Right' });
+      const status = screen.getByRole('status');
+      expect(status).toBeEmptyDOMElement();
+
+      await user.click(screen.getByRole('button', { name: 'Right' }));
+
+      expect(status).toHaveTextContent('Correct!');
+    });
+
+    it('announces a wrong answer with the correct one, and clears the message for the next question', async () => {
+      mockApi({
+        questions: [
+          { question: 'Q1', correct_answer: 'Right', incorrect_answers: ['Wrong'] },
+          { question: 'Q2', correct_answer: 'Right', incorrect_answers: ['Wrong'] },
+        ],
+      });
+      const user = userEvent.setup();
+      render(<Quiz />);
+
+      await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+      await user.click(await screen.findByRole('button', { name: 'Wrong' }));
+      const status = screen.getByRole('status');
+      expect(status).toHaveTextContent('Wrong. The correct answer is Right.');
+
+      await user.click(screen.getByRole('button', { name: /Next Question/i }));
+
+      expect(await screen.findByText('Q2')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeEmptyDOMElement();
+    });
+
+    describe('with a ticking clock', () => {
+      afterEach(() => {
+        vi.useRealTimers();
+      });
+
+      it('announces the time left only at 10 and 5 seconds, not every second', async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        localStorage.setItem('quizSettings', JSON.stringify({ amount: 1, timePerQuestion: 15 }));
+        mockApi({ questions: oneQuestion });
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+        render(<Quiz />);
+
+        await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+        await screen.findByRole('button', { name: 'Right' });
+        const status = screen.getByRole('status');
+        expect(status).toBeEmptyDOMElement();
+
+        for (let second = 1; second <= 5; second++) await act(async () => vi.advanceTimersByTime(1000));
+        expect(status).toHaveTextContent('10 seconds left');
+
+        await act(async () => vi.advanceTimersByTime(1000));
+        expect(status).toBeEmptyDOMElement();
+
+        for (let second = 1; second <= 4; second++) await act(async () => vi.advanceTimersByTime(1000));
+        expect(status).toHaveTextContent('5 seconds left');
+      });
+
+      it('announces that time is up together with the correct answer', async () => {
+        vi.useFakeTimers({ shouldAdvanceTime: true });
+        localStorage.setItem('quizSettings', JSON.stringify({ amount: 1, timePerQuestion: 5 }));
+        mockApi({ questions: oneQuestion });
+        const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+        render(<Quiz />);
+
+        await user.click(screen.getByRole('button', { name: /Start Quiz/i }));
+        await screen.findByRole('button', { name: 'Right' });
+
+        for (let second = 1; second <= 6; second++) await act(async () => vi.advanceTimersByTime(1000));
+
+        expect(screen.getByRole('status')).toHaveTextContent('Time is up. The correct answer is Right.');
+      });
+    });
   });
 });

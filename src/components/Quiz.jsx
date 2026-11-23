@@ -5,6 +5,7 @@ import Settings from "./Settings";
 import Progress from "./Progress";
 import "../stylesheets/quiz.scss";
 import { useQuiz } from "../hooks/useQuiz";
+import { getAnnouncement } from "../utils/announcements";
 
 function Quiz() {
   const { state, handleAnswer, handleNext, handleStart, handleRestart, handleCancel, handleRetryWrong } = useQuiz();
@@ -25,6 +26,7 @@ function Quiz() {
   const isLoading = settings && questions.length === 0 && !error;
 
   const nextButtonRef = useRef(null);
+  const announcement = getAnnouncement({ showAnswer, answerLog, timeLeft, timePerQuestion });
 
   useEffect(() => {
     if (showAnswer && !showResult) nextButtonRef.current?.focus();
@@ -56,6 +58,7 @@ function Quiz() {
     />
   ) : (
     <div className="quiz-container">
+      <p role="status" className="visually-hidden">{announcement}</p>
       <div className="quiz-header">
         <button className="cancel-button" onClick={handleCancel}>
           Cancel Quiz
