@@ -49,11 +49,11 @@ button:focus-visible {
   margin-top: 0;
   margin-left: 0;
   background-color: transparent;
-  color: #e53e3e;
-  border: 1px solid #e53e3e;
+  color: var(--danger-text);
+  border: 1px solid var(--danger-text);
 
   &:hover {
-    background-color: #e53e3e;
+    background-color: var(--danger-bg);
     color: #fff;
     transform: none;
   }
@@ -61,7 +61,7 @@ button:focus-visible {
 
 .error {
   text-align: center;
-  color: #e53e3e;
+  color: var(--danger-text);
 
   p {
     margin-bottom: 20px;

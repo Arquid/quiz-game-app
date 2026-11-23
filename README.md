@@ -13,7 +13,7 @@ A modern quiz application built with React. Users can customize quiz settings, a
 * 🎯 Custom quiz settings (amount, category, difficulty, type)
 * ⏱ Custom timer per question
 * 💾 Settings saved automatically (localStorage), validated on load so corrupted data falls back to defaults
-* 🌙 Dark mode toggle
+* 🌙 Dark mode toggle (colors meet WCAG AA contrast in both themes)
 * 🔊 Sound effects with mute toggle
 * 🎨 Animations (transitions, answer feedback, loading spinner)
 * 📊 Progress bar (questions + time)
@@ -70,7 +70,7 @@ Run the tests:
 npm test
 ```
 
-Run the Playwright tests (production smoke test + responsive layout check; by default they target the live demo, not your local build — set `E2E_BASE_URL=http://localhost:5173/` while `npm run dev` is running to test local changes):
+Run the Playwright tests (production smoke test + responsive layout check + WCAG color-contrast check; by default they target the live demo, not your local build — set `E2E_BASE_URL=http://localhost:5173/` while `npm run dev` is running to test local changes):
 
 ```bash
 npx playwright install --with-deps chromium   # first time only
@@ -81,7 +81,7 @@ npm run test:e2e
 
 ## 🚢 Deployment
 
-Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content.
+Every push to `main` automatically builds and deploys the app to GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Once the deploy succeeds, the same workflow runs a Playwright smoke test ([`e2e/production.spec.js`](e2e/production.spec.js)) against the freshly deployed URL — it fails the workflow if the live site ever serves unbuilt source files or a broken settings screen, which is exactly the kind of misconfiguration a normal build can't catch. A second spec ([`e2e/layout.spec.js`](e2e/layout.spec.js)) checks at phone, tablet and desktop widths that the fixed Dark Mode / Sound On buttons never cover any content, and a third ([`e2e/contrast.spec.js`](e2e/contrast.spec.js)) checks in both themes that all visible text meets WCAG AA color contrast (4.5:1).
 
 **One-time setup** (only needed once per repository): in GitHub, go to **Settings → Pages** and set **Source** to **GitHub Actions**. After that, every push to `main` updates the live demo automatically — no manual deploy step required.
 
@@ -148,7 +148,8 @@ Playwright's production smoke tests live separately at the repo root, since they
 ```
 e2e/
 ├── production.spec.js
-└── layout.spec.js
+├── layout.spec.js
+└── contrast.spec.js
 
 playwright.config.js
 ```

@@ -20,23 +20,24 @@
   }
 
   .question-progress .progress-bar {
-    background-color: #4caf50;
-  }
-    
-  .time-progress .progress-bar {
-    background: #f44336;
+    background-color: var(--success-bg);
   }
 
-  .time-progress.low-time .progress-bar {
+  .time-progress .progress-bar {
+    background: var(--danger-bg);
+  }
+
+  .time-progress.low-time {
     animation: pulse-warning 0.6s ease-in-out infinite;
   }
 }
 
+/* Pulse a glow around the bar instead of fading it, so the seconds text keeps its contrast. */
 @keyframes pulse-warning {
   0%, 100% {
-    opacity: 1;
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
   }
   50% {
-    opacity: 0.55;
+    box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.55);
   }
 }

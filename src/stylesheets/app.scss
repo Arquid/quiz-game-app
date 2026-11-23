@@ -1,3 +1,15 @@
+/* Color roles checked against WCAG AA (4.5:1) in e2e/contrast.spec.js.
+   *-bg: solid fills that carry white text. *-text: colored text on cards or the page. */
+:root {
+  --accent-text: #4f46e5;
+  --success-bg: #2e7d32;
+  --success-text: #2e7d32;
+  --danger-bg: #c62828;
+  --danger-bg-hover: #b71c1c;
+  --danger-text: #c53030;
+  --muted-text: #6b6b6b;
+}
+
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f0f4f8;
@@ -70,6 +82,11 @@ body {
 }
 
 .app.dark {
+  --accent-text: #818cf8;
+  --success-text: #4caf50;
+  --danger-text: #f87171;
+  --muted-text: #999;
+
   background-color: #121212;
 
   .quiz-container,
@@ -92,10 +109,6 @@ body {
 
   .progress-container .progress {
     background: #333;
-  }
-
-  .error {
-    color: #f87171;
   }
 
   .loading,
@@ -129,22 +142,12 @@ body {
       border-bottom-color: #333;
     }
 
-    .history-date {
-      color: #999;
-    }
-
     .history-score {
       color: #f0f0f0;
     }
 
-    .clear-history-button {
-      color: #f87171;
-      border-color: #f87171;
-
-      &:hover {
-        background-color: #f87171;
-        color: #121212;
-      }
+    .clear-history-button:hover {
+      color: #121212;
     }
   }
 }

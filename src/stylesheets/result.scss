@@ -14,7 +14,7 @@
 
   p {
     font-size: 1.2rem;
-    color: #4f46e5;
+    color: var(--accent-text);
   }
 
   .stats {
@@ -32,7 +32,7 @@
   .stat-value {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #4f46e5;
+    color: var(--accent-text);
   }
 
   .stat-label {
@@ -76,11 +76,11 @@
       margin: 2px 0;
 
       &.wrong {
-        color: #e53e3e;
+        color: var(--danger-text);
       }
 
       &.correct {
-        color: #4caf50;
+        color: var(--success-text);
       }
     }
   }
@@ -88,10 +88,10 @@
   .retry-button {
     display: block;
     margin: 10px auto 0;
-    background-color: #e53e3e;
+    background-color: var(--danger-bg);
 
     &:hover {
-      background-color: #c53030;
+      background-color: var(--danger-bg-hover);
     }
   }
 
@@ -121,7 +121,7 @@
     }
 
     .history-date {
-      color: #888;
+      color: var(--muted-text);
     }
 
     .history-score {
@@ -134,12 +134,12 @@
       margin: 15px auto 0;
       padding: 8px 20px;
       background-color: transparent;
-      color: #e53e3e;
-      border: 2px solid #e53e3e;
+      color: var(--danger-text);
+      border: 2px solid var(--danger-text);
       font-size: 0.9rem;
 
       &:hover {
-        background-color: #e53e3e;
+        background-color: var(--danger-text);
         color: #fff;
       }
     }
